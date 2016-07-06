@@ -1,0 +1,97 @@
+mcp23017 = require("mcp23017")
+
+aRelayStatus = {}
+for i = 1, config.io.relays_amount do aRelayStatus[i] = 0 end
+
+mcp23017.begin(0x0, config.i2c.pin_sda, config.i2c.pin_scl, i2c.SLOW)
+
+-- relays
+mcp23017.writeIODIRA(0x00) -- make all GPIO pins as outputs
+mcp23017.writeGPIOA(0x00)  -- make all GIPO pins off/low
+mcp23017.writeIPOLA(0xFF)
+
+-- buttons
+mcp23017.writeIODIRB(0xFF) -- make all GPIO pins as inputs
+mcp23017.writeGPPUB(0xFF)  -- pull up resistor
+mcp23017.writeGPINTENB(0xFF)
+mcp23017.writeDEFVALB(0x00)
+mcp23017.writeINTCONB(0xFF)
+mcp23017.writeIPOLB(0xFF)
+
+mcp23017.readGPIOB()
+
+function ioButtonsInterrupt()
+    print("Interrupt")
+    local gpiobStatusInterrupt = mcp23017.readINTCAPB()
+    if gpiobStatusInterrupt > 0 then
+        tmr.delay(config.io.button_delay_short_click_us)
+        print("Short delay complete")
+        local gpiobStatusShort = mcp23017.readGPIOB()
+        if gpiobStatusShort > 0 then
+            local clickType = 1
+            local gpioStatusFinish = gpiobStatusShort
+            tmr.delay(config.io.button_delay_long_click_us)
+            print("Long delay complete")
+            local gpiobStatusLong = mcp23017.readGPIOB()
+            local buttonBit = 0
+            if gpiobStatusLong > 0 then
+                gpioStatusFinish = gpiobStatusLong
+                clickType = 2
+            end
+            for buttonBit = 0, config.io.buttons_amount - 1 do
+                if bit.isset(gpioStatusFinish, buttonBit) then
+                    print("Button index: " .. buttonBit + 1 .. " type: " .. clickType)
+                    for key, relayIndex in pairs(config.io.buttons_actions[buttonBit + 1][clickType]) do
+                        ioRelaySet(relayIndex)
+                    end
+                    mqttMessage(config.mqtt.type_button .. "/" .. buttonBit + 1, clickType)
+                end
+            end
+        end
+    end
+    while mcp23017.readGPIOB() > 0 do
+        tmr.delay(config.io.buttin_delay_debounce_us)
+    end
+end
+
+function ioRelaySet(relayIndex, state)
+    local state = state or 2;
+    assert(relayIndex >= 0 and relayIndex <= config.io.relays_amount, "relayIndex := 0.." .. config.io.relays_amount)
+    assert(state >= 0 and state <= 2, "state := 0..2")
+
+    local newState = 0
+    if relayIndex == 0 then
+        newState = state
+        local i = 1
+        for i = 1, config.io.relays_amount do
+            if newState == 2 then
+                aRelayStatus[i] = aRelayStatus[i] == 1 and 0 or 1
+            else
+                aRelayStatus[i] = newState
+            end
+            mqttMessage(config.mqtt.type_relay .. "/" .. i, aRelayStatus[i] == 1 and 'ON' or 'OFF')
+        end
+    else
+        if state == 2 then
+            newState = aRelayStatus[relayIndex] == 1 and 0 or 1
+        else
+            newState = state
+        end
+        aRelayStatus[relayIndex] = newState
+        mqttMessage(config.mqtt.type_relay .. "/" .. relayIndex, newState == 1 and 'ON' or 'OFF')
+    end
+
+    local gpioaStatus = 0
+    local i = 1
+    for i = 1, config.io.relays_amount do
+        if aRelayStatus[i] > 0 then
+            gpioaStatus = bit.set(gpioaStatus, i - 1)
+        else
+            gpioaStatus = bit.clear(gpioaStatus, i - 1)
+        end
+    end
+    mcp23017.writeGPIOA(gpioaStatus)
+end
+
+gpio.mode(config.io.pin_interrupt, gpio.INT, gpio.PULLUP)
+gpio.trig(config.io.pin_interrupt, "down", ioButtonsInterrupt)
