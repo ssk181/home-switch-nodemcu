@@ -1,5 +1,4 @@
 # Home IoT light switch on NodeMCU (ESP8266)
-
 Устройство предназначено для управления освещением либо вентиляцией в квартире.
 Каждое устройство размещается в распределительной коробке комнаты, куда приходит питание, провода от ламп либо вентиляторов и от кнопок.
 Предполагается, что реле можно управлять как удаленно, так и при клике на обычный выключатель.
@@ -7,6 +6,13 @@
 
 Управлять можно например через Openhab:
 https://github.com/ssk181/home-switch-openhab
+
+## Hardware
+- NodeMCU
+- MCP23017
+- Relay's (1 - 8)
+- Buttons (1 - 8)
+- DHT11 or DHT22
 
 ## MQTT-сообщения
 Устройство шлет сообщения о каждом действии в MQTT очередь:
@@ -30,10 +36,9 @@ https://github.com/ssk181/home-switch-openhab
    Возвращает JSON с температурой и влажностью:
    *{temp: 24.100, humidity: 99.900, uptime_sec: 1619, free_memmory_byte: 6848}*
 
-## Hardware
-
-- NodeMCU
-- MCP23017
-- Relay's (1 - 8)
-- Buttons (1 - 8)
-- DHT11 or DHT22
+## Installation
+1. Установить на компьютер nodemcu-tool:
+   *npm install nodemcu-tool -g*
+2. Установить на NodeMCU Espress:
+   https://github.com/loicortola/nodemcu-espress
+3. Скриптом *./upload.sh* выгрузить данные скрипты на NodeMCU
