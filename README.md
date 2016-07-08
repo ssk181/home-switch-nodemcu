@@ -11,9 +11,9 @@ https://github.com/ssk181/home-switch-openhab
 ## MQTT-сообщения
 Устройство шлет сообщения о каждом действии в MQTT очередь:
 
-- /home/iot/{Device-IP}/online               *1 - соединился с очередью MQTT, 0 - разъединился (LWT)*
-- /home/iot/{Device-IP}/button/{ButtonIndex} *1 - короткое нажатие, 2 - длинное*
-- /home/iot/{Device-IP}/relay/{ButtonIndex}  *ON или OFF*
+- /home/iot/{Device-IP}/online               *- 1 - соединился с очередью MQTT, 0 - разъединился (LWT)*
+- /home/iot/{Device-IP}/button/{ButtonIndex} *- 1 - короткое нажатие, 2 - длинное*
+- /home/iot/{Device-IP}/relay/{ButtonIndex}  *- ON или OFF*
 
 ## HTTP REST API
 1. Посмотреть текущее состояние реле:
@@ -25,6 +25,10 @@ https://github.com/ssk181/home-switch-openhab
    Возвращает аналогичный предыдущему JSON.
    Если указано реле с индексом 0, то действие приминится ко всем реле устройства.
    Возможные действия: set=0 - выключение, set=1 - включение, set=2 - инверсия
+3. Получение данных по климату:
+   **/api/climate**
+   Возвращает JSON с температурой и влажностью:
+   *{temp: 24.100, humidity: 99.900, uptime_sec: 1619, free_memmory_byte: 6848}*
 
 ## Hardware
 
