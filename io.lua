@@ -38,14 +38,21 @@ function ioButtonsInterrupt()
                 gpioStatusFinish = gpiobStatusLong
                 clickType = 2
             end
+            local aRelayIndexSet = {}
             for buttonBit = 0, config.io.buttons_amount - 1 do
                 if bit.isset(gpioStatusFinish, buttonBit) then
-                    print("Button index: " .. buttonBit + 1 .. " type: " .. clickType)
-                    for key, relayIndex in pairs(config.io.buttons_actions[buttonBit + 1][clickType]) do
-                        ioRelaySet(relayIndex)
+                    local buttonIndex = buttonBit + 1;
+                    print("Button index: " .. buttonIndex .. " type: " .. clickType)
+                    mqttMessage(config.mqtt.type_button .. "/" .. buttonIndex, clickType)
+                    for key, relayIndex in pairs(config.io.buttons_actions[buttonIndex][clickType]) do
+                        if not inTable(aRelayIndexSet, relayIndex) then
+                            table.insert(aRelayIndexSet, relayIndex)
+                        end
                     end
-                    mqttMessage(config.mqtt.type_button .. "/" .. buttonBit + 1, clickType)
                 end
+            end
+            for key, relayIndex in pairs(aRelayIndexSet) do
+                ioRelaySet(relayIndex)
             end
         end
     end
@@ -91,6 +98,13 @@ function ioRelaySet(relayIndex, state)
         end
     end
     mcp23017.writeGPIOA(gpioaStatus)
+end
+
+function inTable(tbl, item)
+    for key, value in pairs(tbl) do
+        if value == item then return true end
+    end
+    return false
 end
 
 gpio.mode(config.io.pin_interrupt, gpio.INT, gpio.PULLUP)
