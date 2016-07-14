@@ -1,12 +1,15 @@
 mqttConnected = false
+mqttQueue = {}
 
 function mqttMessage(type, message)
     if mqttConnected then
         local ip = wifi.sta.getip() or "none"
-        mqttClient:publish(config.mqtt.topic .. "/" .. ip .. "/" .. type, message, 0, 0, function(client)
+        mqttClient:publish(config.mqtt.topic .. "/" .. ip .. "/" .. type, message, 0, 1, function(client)
             print("MQTT message sended") 
         end)
         print("MQTT message: " .. config.mqtt.topic .. "/" .. ip .. "/" .. type .. " - " .. message)
+    else
+        mqttQueueAdd(type, message)
     end
 end
 
@@ -28,6 +31,7 @@ function mqttConnect(firstReconnect)
                 mqttMessage(config.mqtt.type_online, 1)
                 mqttConnected = true
                 print("MQTT connected success")
+                mqttQueueSend()
             end)
             mqttClient:connect(config.mqtt.broker_ip, config.mqtt.port, false, false,
                 function(client, reason)
@@ -44,6 +48,33 @@ function mqttClean()
         mqttClient = nil
         collectgarbage("collect")
         print("MQTT cleaned")
+    end
+end
+
+function mqttQueueAdd(type, message)
+    local timeLine = tmr.time() - config.mqtt.queue_ttl_sec
+    local i = 1
+    while i <= #mqttQueue do
+        if mqttQueue[i]["time"] < timeLine or i > config.mqtt.queue_max_size then
+            table.remove(mqttQueue, i)
+        else
+            i = i + 1
+        end
+    end
+    table.insert(mqttQueue, {time = tmr.time(), type = type, message = message})
+end
+
+function mqttQueueSend()
+    local msg = nil
+    local i = 1    
+    while i <= #mqttQueue do
+        if mqttConnected then
+            msg = mqttQueue[i]
+            table.remove(mqttQueue, i)
+            mqttMessage(msg["type"], msg["message"])
+        else
+            i = i + 1
+        end
     end
 end
 
