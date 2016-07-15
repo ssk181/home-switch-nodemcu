@@ -4,7 +4,7 @@ mqttQueue = {}
 function mqttMessage(topic, message)
     if mqttConnected then
         local ip = wifi.sta.getip() or "none"
-        mqttClient:publish(config.mqtt.topic .. "/" .. ip .. "/" .. config.mqtt.dir_out ..  "/" .. topic, message, 0, 1, function(client)
+        mqttClient:publish(config.mqtt.topic .. "/" .. ip .. "/" .. config.mqtt.dir_out ..  "/" .. topic, message, 0, 0, function(client)
             print("MQTT message sended") 
         end)
         print("MQTT message send: " .. config.mqtt.topic .. "/" .. ip .. "/" .. config.mqtt.dir_out ..  "/" .. topic .. " - " .. message)
