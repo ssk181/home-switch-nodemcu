@@ -1,5 +1,4 @@
 dofile("config.lc")
 dofile("io.lc")
 dofile("network.lc")
-dofile("httpd.lc")
 dofile("mqtt.lc")

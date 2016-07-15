@@ -17,28 +17,23 @@ https://github.com/ssk181/home-switch-openhab
 ## MQTT-сообщения
 Устройство шлет сообщения о каждом действии в MQTT очередь:
 
-- /home/iot/{Device-IP}/online               *- 1 - соединился с очередью MQTT, 0 - разъединился (LWT)*
-- /home/iot/{Device-IP}/button/{ButtonIndex} *- 1 - короткое нажатие, 2 - длинное*
-- /home/iot/{Device-IP}/relay/{ButtonIndex}  *- ON или OFF*
+- /home/iot/{Device-IP}/out/online               *- ON - соединился с очередью MQTT, OFF - разъединился (LWT)*
+- /home/iot/{Device-IP}/out/button/{ButtonIndex} *- 1 - короткое нажатие, 2 - длинное*
+- /home/iot/{Device-IP}/out/relay/{ButtonIndex}  *- ON или OFF*
+- /home/iot/{Device-IP}/out/climate/temp         *- Температура в градусах*
+- /home/iot/{Device-IP}/out/climate/humidity     *- Влажность в процентах*
+- /home/iot/{Device-IP}/out/state/uptime         *- Время работы устройства с момента последней загрузки в секундах*
+- /home/iot/{Device-IP}/out/state/memory         *- Свободная память в байтах *
 
-## HTTP REST API
-1. Посмотреть текущее состояние реле:
-   **/api/relay?index={1-8}**
-   Для запроса текущего статуса реле, возвращает JSON:
-   *{index: 1, state: 1, uptime_sec: 723, free_memmory_byte: 6912}*
-2. Управление реле:
-   **/api/relay?index={0-8}[&set=0-2]**
-   Возвращает аналогичный предыдущему JSON.
-   Если указано реле с индексом 0, то действие приминится ко всем реле устройства.
-   Возможные действия: set=0 - выключение, set=1 - включение, set=2 - инверсия
-3. Получение данных по климату:
-   **/api/climate**
-   Возвращает JSON с температурой и влажностью:
-   *{temp: 24.100, humidity: 99.900, uptime_sec: 1619, free_memmory_byte: 6848}*
+
+И принимает сообщения:
+- /home/iot/{Device-IP}/in/relay/{ButtonIndex}  *- ON | OFF | INVERT*
+- /home/iot/{Device-IP}/in/climate/temp         *Без сообщения*
+- /home/iot/{Device-IP}/in/climate/humidity     *Без сообщения*
+- /home/iot/{Device-IP}/in/state/uptime         *Без сообщения*
+- /home/iot/{Device-IP}/in/state/memory         *Без сообщения*
 
 ## Installation
 1. Установить на компьютер nodemcu-tool:
    *npm install nodemcu-tool -g*
-2. Установить на NodeMCU Espress:
-   https://github.com/loicortola/nodemcu-espress
-3. Скриптом *./upload.sh* выгрузить данные скрипты на NodeMCU
+2. Скриптом *./upload.sh* выгрузить данные скрипты на NodeMCU

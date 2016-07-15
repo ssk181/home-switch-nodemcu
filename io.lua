@@ -43,7 +43,7 @@ function ioButtonsInterrupt()
                 if bit.isset(gpioStatusFinish, buttonBit) then
                     local buttonIndex = buttonBit + 1;
                     print("Button index: " .. buttonIndex .. " type: " .. clickType)
-                    mqttMessage(config.mqtt.type_button .. "/" .. buttonIndex, clickType)
+                    mqttMessage(config.mqtt.topic_button .. "/" .. buttonIndex, clickType)
                     for key, relayIndex in pairs(config.io.buttons_actions[buttonIndex][clickType]) do
                         if not inTable(aRelayIndexSet, relayIndex) then
                             table.insert(aRelayIndexSet, relayIndex)
@@ -76,7 +76,7 @@ function ioRelaySet(relayIndex, state)
             else
                 aRelayStatus[i] = newState
             end
-            mqttMessage(config.mqtt.type_relay .. "/" .. i, aRelayStatus[i] == 1 and 'ON' or 'OFF')
+            mqttMessage(config.mqtt.topic_relay .. "/" .. i, aRelayStatus[i] == 1 and 'ON' or 'OFF')
         end
     else
         if state == 2 then
@@ -85,7 +85,7 @@ function ioRelaySet(relayIndex, state)
             newState = state
         end
         aRelayStatus[relayIndex] = newState
-        mqttMessage(config.mqtt.type_relay .. "/" .. relayIndex, newState == 1 and 'ON' or 'OFF')
+        mqttMessage(config.mqtt.topic_relay .. "/" .. relayIndex, newState == 1 and 'ON' or 'OFF')
     end
 
     local gpioaStatus = 0

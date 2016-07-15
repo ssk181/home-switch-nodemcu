@@ -5,11 +5,6 @@ config = {
         tmr_alarm_id = 0,
         tmr_retry_ms = 20000
     },
-    httpd = {
-        port         = 80,
-        tmr_alarm_id = 1,
-        tmr_retry_ms = 3000
-    },
     i2c = {
         pin_sda = 3,
         pin_scl = 4
@@ -37,13 +32,22 @@ config = {
         user           = "",
         password       = "",
         keep_alive_sec = 60,
-        tmr_alarm_id   = 2,
+        tmr_alarm_id   = 1,
         tmr_retry_ms   = 3000,
         queue_ttl_sec  = 3600,
         queue_max_size = 50,
-        type_online    = "online",
-        type_button    = "button",
-        type_relay     = "relay",
-        topic          = "/home/iot"
+        topic_online   = "online",
+        topic_button   = "button",
+        topic_relay    = "relay",
+        topic_climate_temp     = "climate/temp",
+        topic_climate_humidity = "climate/humidity",
+        topic_state_uptime = "state/uptime",
+        topic_state_memory = "state/memory",
+        topic          = "/home/iot",
+        dir_in         = "in",
+        dir_out        = "out",
+        msg_on         = "ON",
+        msg_off        = "OFF",
+        msg_invert     = "INVERT",
     }
 }
