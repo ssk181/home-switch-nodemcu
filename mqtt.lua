@@ -119,7 +119,7 @@ end
 
 function mqttClimateSend(topic)
     if topic == config.mqtt.topic_climate_temp or topic == config.mqtt.topic_climate_humidity then
-        if tmr.time() - mqttClimate["time"] > config.mqtt.climate_cache_sec then
+        if mqttClimate["temp"] == nil or tmr.time() - mqttClimate["time"] > config.mqtt.climate_cache_sec then
             local climate = require("climate")
             local error, temp,  humidity= climate.get()
             mqttClimate["temp"]     = temp
