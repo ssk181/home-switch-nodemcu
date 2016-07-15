@@ -1,5 +1,6 @@
 mqttConnected = false
 mqttQueue = {}
+mqttClimate = {time = tmr.time(), temp = nil, humidity = nil}
 
 function mqttMessage(topic, message)
     if mqttConnected then
@@ -59,10 +60,10 @@ function mqttConnect(firstReconnect)
                     end
                 -- climate temp
                 elseif (topic_main == config.mqtt.topic_climate_temp) then
-                    mqttSendClimate(config.mqtt.topic_climate_temp)
+                    mqttClimateSend(config.mqtt.topic_climate_temp)
                 -- climate humidity
                 elseif (topic_main == config.mqtt.topic_climate_humidity) then
-                    mqttSendClimate(config.mqtt.topic_climate_humidity)
+                    mqttClimateSend(config.mqtt.topic_climate_humidity)
                 -- state uptime
                 elseif (topic_main == config.mqtt.topic_state_uptime) then
                     mqttMessage(config.mqtt.topic_state_uptime, tmr.time())
@@ -116,12 +117,17 @@ function mqttQueueSend()
     end
 end
 
-function mqttSendClimate(topic)
+function mqttClimateSend(topic)
     if topic == config.mqtt.topic_climate_temp or topic == config.mqtt.topic_climate_humidity then
-        local climate = require("climate")
-        local error, temp, humidity = climate.get()
-        if error == nill then
-            local data = topic == config.mqtt.topic_climate_temp and temp or humidity
+        if tmr.time() - mqttClimate["time"] > config.mqtt.climate_cache_sec then
+            local climate = require("climate")
+            local error, temp,  humidity= climate.get()
+            mqttClimate["temp"]     = temp
+            mqttClimate["humidity"] = humidity
+            mqttClimate["time"]     = tmr.time()
+        end
+        local data = topic == config.mqtt.topic_climate_temp and mqttClimate["temp"] or mqttClimate["humidity"]
+        if data ~= nil then
             mqttMessage(topic, data)
         end
     end

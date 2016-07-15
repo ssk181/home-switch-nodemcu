@@ -49,5 +49,6 @@ config = {
         msg_on         = "ON",
         msg_off        = "OFF",
         msg_invert     = "INVERT",
+        climate_cache_sec = 15
     }
 }
