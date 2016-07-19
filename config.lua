@@ -5,6 +5,10 @@ config = {
         tmr_alarm_id = 0,
         tmr_retry_ms = 20000
     },
+    collectgarbage = {
+        tmr_alarm_id = 1,
+        tmr_run_ms   = 60000
+    },
     i2c = {
         pin_sda = 3,
         pin_scl = 4
@@ -32,7 +36,7 @@ config = {
         user           = "",
         password       = "",
         keep_alive_sec = 60,
-        tmr_alarm_id   = 1,
+        tmr_alarm_id   = 2,
         tmr_retry_ms   = 3000,
         queue_ttl_sec  = 3600,
         queue_max_size = 50,
