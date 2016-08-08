@@ -14,6 +14,8 @@ https://github.com/ssk181/home-switch-openhab
 - Buttons (1 - 8)
 - DHT11 or DHT22
 
+![Scheme](scheme.png "Scheme")
+
 ## MQTT-сообщения
 Устройство шлет сообщения о каждом действии в MQTT очередь:
 
