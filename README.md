@@ -36,6 +36,12 @@ https://github.com/ssk181/home-switch-openhab
 - /home/iot/{Device-IP}/in/state/memory         *Без сообщения*
 
 ## Installation
-1. Установить на компьютер nodemcu-tool:
+1. Установить прошивку integer с модулями: *bit, dht, file, gpio, i2c, mqtt, net, node, tmr, uart, wifi* (собрать можно самому либо тут: http://nodemcu-build.com/)
+2. Установить на компьютер nodemcu-tool:
    *npm install nodemcu-tool -g*
-2. Скриптом *./upload.sh* выгрузить данные скрипты на NodeMCU
+3. Скриптом *./upload.sh* выгрузить данные скрипты на NodeMCU
+
+![Photo 1](pic/1.jpg "Photo 1")
+![Photo 2](pic/2.jpg "Photo 2")
+![Photo 3](pic/3.jpg "Photo 3")
+
