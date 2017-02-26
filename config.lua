@@ -18,7 +18,7 @@ config = {
         pin_interrupt    = 6,
         button_delay_short_click_us = 20000,
         button_delay_long_click_us  = 500000,
-        buttin_delay_debounce_us    = 50000,
+        button_delay_debounce_us    = 50000,
         buttons_actions = { -- linked relays on short click and on long click
             {{1}, {4}}, -- button 1
             {{2}, {4}}, -- button 2

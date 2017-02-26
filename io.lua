@@ -57,7 +57,7 @@ function ioButtonsInterrupt()
         end
     end
     while mcp23017.readGPIOB() > 0 do
-        tmr.delay(config.io.buttin_delay_debounce_us)
+        tmr.delay(config.io.button_delay_debounce_us)
     end
 end
 
