@@ -6,16 +6,15 @@ config = {
         tmr_retry_ms = 20000
     },
     collectgarbage = {
-        tmr_alarm_id = 1,
-        tmr_run_ms   = 60000
+        ticks = 10,
     },
     i2c = {
         pin_sda = 3,
         pin_scl = 4
-	},
+    },
     io = {
-        buttons_amount   = 4, -- 1 to 8
-        relays_amount    = 5, -- 1 to 8
+        buttons_amount   = 3, -- 1 to 8
+        relays_amount    = 4, -- 1 to 8
         pin_interrupt    = 6,
         button_delay_short_click_us = 20000,
         button_delay_long_click_us  = 500000,
@@ -23,8 +22,7 @@ config = {
         buttons_actions = { -- linked relays on short click and on long click
             {{1}, {4}}, -- button 1
             {{2}, {4}}, -- button 2
-            {{3}, {4}}, -- button 3
-            {{5}, {5}}  -- button 4
+            {{3}, {4}}  -- button 3
         }
     },
     dht = {

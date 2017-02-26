@@ -1,6 +1,7 @@
 mqttConnected = false
 mqttQueue = {}
 mqttClimate = {time = tmr.time(), temp = nil, humidity = nil}
+collectgarbageCounter = 0
 
 function mqttMessage(topic, message)
     if mqttConnected then
@@ -45,10 +46,10 @@ function mqttConnect(firstReconnect)
                 local topic_prefix = config.mqtt.topic .. "/" .. ip .. "/" .. config.mqtt.dir_in .. "/"
                 local topic_main = string.sub(topic, #topic_prefix + 1)
                 -- relay
-                if (string.sub(topic_main, 1, #config.mqtt.topic_relay + 1) == config.mqtt.topic_relay .. "/") then
+                if string.sub(topic_main, 1, #config.mqtt.topic_relay + 1) == config.mqtt.topic_relay .. "/" then
                     local relayIndex = tonumber(string.sub(topic_main, #config.mqtt.topic_relay + 2))
                     if relayIndex ~= nil then
-                        local relaySet = 0
+                        local relaySet = nil
                         if message == config.mqtt.msg_off then
                             relaySet = 0
                         elseif message == config.mqtt.msg_on then
@@ -56,21 +57,31 @@ function mqttConnect(firstReconnect)
                         elseif message == config.mqtt.msg_invert then
                             relaySet = 2
                         end
-                        pcall(ioRelaySet, relayIndex, relaySet)
+                        if relaySet ~= nil then
+                            pcall(ioRelaySet, relayIndex, relaySet)
+                        end
                     end
                 -- climate temp
-                elseif (topic_main == config.mqtt.topic_climate_temp) then
+                elseif topic_main == config.mqtt.topic_climate_temp then
                     mqttClimateSend(config.mqtt.topic_climate_temp)
                 -- climate humidity
-                elseif (topic_main == config.mqtt.topic_climate_humidity) then
+                elseif topic_main == config.mqtt.topic_climate_humidity then
                     mqttClimateSend(config.mqtt.topic_climate_humidity)
                 -- state uptime
-                elseif (topic_main == config.mqtt.topic_state_uptime) then
+                elseif topic_main == config.mqtt.topic_state_uptime then
                     mqttMessage(config.mqtt.topic_state_uptime, tmr.time())
                 -- state memory
-                elseif (topic_main == config.mqtt.topic_state_memory) then
+                elseif topic_main == config.mqtt.topic_state_memory then
                     mqttMessage(config.mqtt.topic_state_memory, node.heap())
                 end
+
+                collectgarbageCounter = collectgarbageCounter + 1
+                if collectgarbageCounter > config.collectgarbage.ticks then
+                    collectgarbageCounter = 0
+                    collectgarbage("collect")
+                    print("Collect garbage")
+                end
+
             end)
             mqttClient:connect(config.mqtt.broker_ip, config.mqtt.port, false, false,
                 function(client, reason)

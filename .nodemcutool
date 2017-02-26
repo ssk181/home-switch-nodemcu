@@ -1,7 +1,7 @@
 {
     "baudrate": "115200",
     "port": "/dev/cu.SLAB_USBtoUART",
-    "optimize": false,
-    "compile": false,
+    "optimize": true,
+    "compile": true,
     "keeppath": true
 }
