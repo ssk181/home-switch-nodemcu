@@ -1,5 +1,6 @@
 mcp23017 = require("mcp23017")
 
+buttonStateDown = 0
 aRelayStatus = {}
 for i = 1, config.io.relays_amount do aRelayStatus[i] = 0 end
 
@@ -23,7 +24,8 @@ mcp23017.readGPIOB()
 function ioButtonsInterrupt()
     print("Interrupt")
     local gpiobStatusInterrupt = mcp23017.readINTCAPB()
-    if gpiobStatusInterrupt > 0 then
+    if buttonStateDown == 0 and gpiobStatusInterrupt > 0 then
+        buttonStateDown = 1
         tmr.delay(config.io.button_delay_short_click_us)
         print("Short delay complete")
         local gpiobStatusShort = mcp23017.readGPIOB()
@@ -56,8 +58,18 @@ function ioButtonsInterrupt()
             end
         end
     end
-    while mcp23017.readGPIOB() > 0 do
-        tmr.delay(config.io.button_delay_debounce_us)
+    ioButtonUp()
+end
+
+function ioButtonUp(doContinue)
+    if doContinue == nil then
+        tmr.alarm(config.io.button_up_tmr_alarmd_id, config.io.button_up_check_ms, tmr.ALARM_AUTO, function()
+            ioButtonUp(true)
+        end)
+    end
+    if mcp23017.readGPIOB() == 0 then
+        buttonStateDown = 0
+        tmr.unregister(config.io.button_up_tmr_alarmd_id)
     end
 end
 
