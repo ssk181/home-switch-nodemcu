@@ -14,15 +14,15 @@ config = {
     },
     io = {
         buttons_amount   = 2, -- 1 to 8
-        relays_amount    = 4, -- 1 to 8
+        relays_amount    = 3, -- 1 to 8
         pin_interrupt    = 6,
         button_delay_short_click_us = 20000,
         button_delay_long_click_us  = 500000,
         button_up_tmr_alarmd_id     = 3,
         button_up_check_ms          = 500,
         buttons_actions = { -- linked relays on short click and on long click
-            {{1}, {3}}, -- button 1
-            {{2}, {4}}, -- button 2
+            {{1}, {3}},
+            {{2}, {3}}
         }
     },
     dht = {
@@ -46,6 +46,7 @@ config = {
         topic_climate_humidity = "climate/humidity",
         topic_state_uptime     = "state/uptime",
         topic_state_memory     = "state/memory",
+        topic_state_relay      = "state/relay",
         dir_in         = "in",
         dir_out        = "out",
         msg_on         = "ON",

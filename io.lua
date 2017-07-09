@@ -112,6 +112,13 @@ function ioRelaySet(relayIndex, state)
     mcp23017.writeGPIOA(gpioaStatus)
 end
 
+function ioSendState()
+    local i = 1
+    for i = 1, config.io.relays_amount do
+        mqttMessage(config.mqtt.topic_state_relay .. "/" .. i, aRelayStatus[i] == 1 and 'ON' or 'OFF')
+    end
+end
+
 function inTable(tbl, item)
     for key, value in pairs(tbl) do
         if value == item then return true end
