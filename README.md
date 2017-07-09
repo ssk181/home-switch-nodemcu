@@ -21,12 +21,12 @@ https://github.com/ssk181/home-switch-openhab
 
 - /home/iot/{Device-IP}/out/online               *- ON - соединился с очередью MQTT, OFF - разъединился (LWT)*
 - /home/iot/{Device-IP}/out/button/{ButtonIndex} *- 1 - короткое нажатие, 2 - длинное*
-- /home/iot/{Device-IP}/out/relay/{ButtonIndex}  *- ON или OFF*
+- /home/iot/{Device-IP}/out/relay/{RelayIndex}   *- ON или OFF*
 - /home/iot/{Device-IP}/out/climate/temp         *- Температура в градусах*
 - /home/iot/{Device-IP}/out/climate/humidity     *- Влажность в процентах*
 - /home/iot/{Device-IP}/out/state/uptime         *- Время работы устройства с момента последней загрузки в секундах*
-- /home/iot/{Device-IP}/out/state/memory         *- Свободная память в байтах *
-
+- /home/iot/{Device-IP}/out/state/memory         *- Свободная память в байтах*
+- /home/iot/{Device-IP}/out/state/relay/{RelayIndex} *- Статус реле ON или OFF*
 
 И принимает сообщения:
 - /home/iot/{Device-IP}/in/relay/{ButtonIndex}  *- ON | OFF | INVERT*
@@ -34,6 +34,7 @@ https://github.com/ssk181/home-switch-openhab
 - /home/iot/{Device-IP}/in/climate/humidity     *Без сообщения*
 - /home/iot/{Device-IP}/in/state/uptime         *Без сообщения*
 - /home/iot/{Device-IP}/in/state/memory         *Без сообщения*
+- /home/iot/{Device-IP}/in/state/relay          *Без сообщения*
 
 ## Installation
 1. Установить прошивку integer с модулями: *bit, dht, file, gpio, i2c, mqtt, net, node, tmr, uart, wifi* (собрать можно самому либо тут: http://nodemcu-build.com/)
